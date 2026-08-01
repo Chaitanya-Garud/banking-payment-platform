@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payment-service
+  namespace: payment
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kubectl
+    environment: production
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+spec:
+  ingressClassName: nginx
+
+  tls:
+    - hosts:
+        - payment.bank.internal
+      secretName: payment-service-tls
+
+  rules:
+    - host: payment.bank.internal
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: payment-service
+                port:
+                  number: 80
