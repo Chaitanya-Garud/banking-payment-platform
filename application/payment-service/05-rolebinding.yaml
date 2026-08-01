@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: payment-service-rolebinding
+  namespace: payment
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/managed-by: kubectl
+    environment: production
+subjects:
+  - kind: ServiceAccount
+    name: payment-service-sa
+    namespace: payment
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: payment-service-role
