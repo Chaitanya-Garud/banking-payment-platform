@@ -5,47 +5,44 @@ metadata:
   namespace: payment
   labels:
     app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
     app.kubernetes.io/component: backend
     app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/managed-by: kubectl
     environment: production
 rules:
+  # Read ConfigMaps
+  - apiGroups: [""]
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
 
-# Read ConfigMaps
-- apiGroups: [""]
-  resources:
-    - configmaps
-  verbs:
-    - get
-    - list
-    - watch
+  # Read Services
+  - apiGroups: [""]
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
 
-# Read Secrets
-- apiGroups: [""]
-  resources:
-    - secrets
-  verbs:
-    - get
+  # Read Endpoints
+  - apiGroups: [""]
+    resources:
+      - endpoints
+    verbs:
+      - get
+      - list
+      - watch
 
-# Read Pod information
-- apiGroups: [""]
-  resources:
-    - pods
-  verbs:
-    - get
-    - list
-
-# Read Service information
-- apiGroups: [""]
-  resources:
-    - services
-  verbs:
-    - get
-    - list
-
-# Read Endpoints
-- apiGroups: [""]
-  resources:
-    - endpoints
-  verbs:
-    - get
-    - list
+  # Read Pods (Service Discovery / Diagnostics)
+  - apiGroups: [""]
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
