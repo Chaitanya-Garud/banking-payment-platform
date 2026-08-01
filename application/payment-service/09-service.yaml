@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service
+  namespace: payment
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kubectl
+    environment: production
+spec:
+  type: ClusterIP
+
+  selector:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http
