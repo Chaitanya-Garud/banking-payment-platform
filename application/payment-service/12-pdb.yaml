@@ -1,0 +1,21 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: payment-service
+  namespace: payment
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kubectl
+    environment: production
+
+spec:
+  minAvailable: 2
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment-service
+      app.kubernetes.io/instance: payment-service
