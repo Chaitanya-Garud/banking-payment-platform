@@ -1,0 +1,51 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: payment-service-role
+  namespace: payment
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: banking-platform
+    environment: production
+rules:
+
+# Read ConfigMaps
+- apiGroups: [""]
+  resources:
+    - configmaps
+  verbs:
+    - get
+    - list
+    - watch
+
+# Read Secrets
+- apiGroups: [""]
+  resources:
+    - secrets
+  verbs:
+    - get
+
+# Read Pod information
+- apiGroups: [""]
+  resources:
+    - pods
+  verbs:
+    - get
+    - list
+
+# Read Service information
+- apiGroups: [""]
+  resources:
+    - services
+  verbs:
+    - get
+    - list
+
+# Read Endpoints
+- apiGroups: [""]
+  resources:
+    - endpoints
+  verbs:
+    - get
+    - list
