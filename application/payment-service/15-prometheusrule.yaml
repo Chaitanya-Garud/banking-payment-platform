@@ -1,0 +1,69 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: payment-service
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: payment-service
+    app.kubernetes.io/instance: payment-service
+    app.kubernetes.io/component: monitoring
+    app.kubernetes.io/part-of: banking-platform
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/managed-by: kubectl
+    release: prometheus
+
+spec:
+  groups:
+    - name: payment-service.rules
+
+      rules:
+
+        - alert: PaymentServiceDown
+          expr: up{job="payment-service"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            team: payments
+          annotations:
+            summary: "Payment Service is down"
+            description: "Payment Service has been unreachable for more than 2 minutes."
+
+        - alert: PaymentServiceHighCPU
+          expr: rate(container_cpu_usage_seconds_total{pod=~"payment-service-.*"}[5m]) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+            team: payments
+          annotations:
+            summary: "High CPU usage"
+            description: "Payment Service CPU utilization is above 80%."
+
+        - alert: PaymentServiceHighMemory
+          expr: container_memory_working_set_bytes{pod=~"payment-service-.*"} > 800000000
+          for: 5m
+          labels:
+            severity: warning
+            team: payments
+          annotations:
+            summary: "High memory usage"
+            description: "Payment Service memory usage exceeded threshold."
+
+        - alert: PaymentServiceTooManyRestarts
+          expr: increase(kube_pod_container_status_restarts_total{pod=~"payment-service-.*"}[10m]) > 3
+          for: 5m
+          labels:
+            severity: critical
+            team: payments
+          annotations:
+            summary: "Container restarting frequently"
+            description: "Payment Service container restarted more than 3 times in the last 10 minutes."
+
+        - alert: PaymentServicePodNotReady
+          expr: kube_pod_status_ready{condition="true",pod=~"payment-service-.*"} == 0
+          for: 5m
+          labels:
+            severity: critical
+            team: payments
+          annotations:
+            summary: "Pod not ready"
+            description: "Payment Service Pod has not been Ready for over 5 minutes."
